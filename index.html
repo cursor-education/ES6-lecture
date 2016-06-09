@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ES 2015</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# ES 2016
+## ES 6, Harmony
+
+---
+
+# Before we start
+
+- [Can I Use](http://caniuse.com/)
+- [Babel playground](https://babeljs.io/repl/)
+
+---
+
+# Block-Scoped Variables, LET
+
+- The let statement declares a block scope local variable, optionally initializing it to a value.
+- Block-scoped variables (and constants) without hoisting.
+
+``` html
+let var1 [= value1] [, var2 [= value2]] [, ..., varN [= valueN]];
+
+```
+
+``` html
+ for (var i = 0; i <= 10; i++) {
+   // do smth.
+ }
+
+ console.log(i); // 11
+
+ for (let j = 0; j <= 10; j++) {
+   // do smth.
+ }
+
+ console.log(j); // Uncaught ReferenceError: j is not defined
+
+```
+---
+
+# Constants
+
+``` html
+const name1 = value1 [, name2 = value2 [, ... [, nameN = valueN]]];
+
+```
+
+``` html
+
+const PI = 3.141593;
+console.log(PI);
+PI = 25; // Uncaught TypeError: Assignment to constant variable.
+
+```
+---
+
+# VAR, LET or CONST ?
+
+``` html
+function foo() {
+  var a = 10;
+}
+
+console.log(a); // ???
+
+
+function foo() {
+  var a = 10;
+}
+
+foo();
+
+console.log(a); // ???
+
+
+(function() {
+    var a = 10;
+}());
+
+console.log(a); // ???
+
+```
+
+---
+# VAR, LET or CONST ?
+
+``` html
+
+{
+
+}
+
+{
+  let foo = 'bar'
+  console.log(foo);
+}
+
+console.log(foo); // Uncaught ReferenceError: foo is not defined
+
+```
+---
+
+# Arrow functions
+
+``` html
+(param1, param2, …, paramN) => { statements }
+(param1, param2, …, paramN) => expression
+         // equivalent to:  => { return expression; }
+
+// Parentheses are optional when there's only one parameter:
+(singleParam) => { statements }
+singleParam => { statements }
+
+// A function with no parameters requires parentheses:
+() => { statements }
+
+```
+
+---
+# Arrow functions
+## No own this
+
+``` html
+let foo = () => { console.log(this) };
+
+foo(); // window
+
+var bar = new foo;
+// Uncaught TypeError: () => { console.log(this) } is not a constructor
+
+```
+
+---
+# Functions
+## Default parameters
+
+``` html
+function add(x, y = 30, z = 20) {
+  return x + y + z;
+}
+
+add(1, 2, 3); // 6
+add(50); // 100
+
+```
+
+---
+# Functions
+## Rest parameter
+
+``` html
+function showFirstOther(name, age, ...other) {
+  console.log(other[0]);
+}
+
+showFirstOther("Volodymyr", 32, "Babeloper", 5); // Babeloper
+
+```
+---
+
+# Template literals
+
+Template literals are string literals allowing embedded expressions.
+You can use multi-line strings and string interpolation features with them.
+
+```html
+var beer = {
+  name: 'Staropramen'
+}
+
+var logo = `Hello ${beer.name}`; // Hello Staropramen
+console.log(logo);
+```
+
+```html
+var customer = { name: "Foo" };
+var card = { amount: 7, product: "Bar", unitprice: 42 };
+
+var message = `Hello ${customer.name},
+want to buy ${card.amount} ${card.product} for
+a total of ${card.amount * card.unitprice} bucks?`;
+
+```
+---
+
+# Destructuring Assignment
+## Array Matching
+```html
+let list = [1, 10, 100];
+
+let [a = 0, b = 1, c = 2, d = 3, e] = list;
+
+console.log(a, b, c, d, e);
+```
+---
+
+# Destructuring Assignment
+## Object Matching, Shorthand Notation
+```html
+let data = {
+  name: 'John',
+  surname: 'Doe',
+  occupation: 'Developer',
+  company: {
+    name: 'Freelance',
+    rate: 15
+  }
+};
+
+let {name, surname, occupation} = data;
+
+console.log(occupation);
+
+let {name: x, company: {name: y}} = data;
+
+console.log(x, y);
+```
+---
+
+# Classes
+
+```html
+
+class Beer {
+  constructor(name) {
+    this.name = name;
+  }
+
+  drink() {
+    console.log('Drinking ' + this.name);
+  }
+}
+
+let staropramen = new Beer('staropramen');
+staropramen.drink(); // Drinking staropramen
+
+```
+
+---
+
+# Extending Classes
+
+```html
+
+class BeerMix extends Beer {
+  constructor(name, juice) {
+    super(name);
+    this.juice = juice;
+  }
+
+  drink() {
+    console.log('Drinking ' + this.juice + ' with ' + this.name);
+  }
+}
+
+let beermix = new BeerMix('staropramen', 'lime');
+beermix.drink(); // Drinking lime with staropramen
+
+```
+
+---
+
+# Classes getters and setters
+
+```html
+
+class Car {
+  constructor(name) {
+    this.name = name;
+    this._speed = 0;
+  }
+
+  get speed() {
+    return this._speed;
+  }
+
+  set speed(speed) {
+    this._speed = speed < 250 ? speed : 250;
+  }
+}
+
+var car = new Car('Audi');
+console.log(car.speed);
+
+car.speed = 60;
+console.log(car.speed);
+
+car.speed = 300;
+console.log(car.speed);
+
+```
+
+---
+
+# Symbol Datatype
+
+ECMAScript 6 introduces a new primitive type: symbols. They are tokens that serve as unique IDs.
+
+```html
+
+Symbol("foo") !== Symbol("foo")
+
+const foo = Symbol()
+const bar = Symbol()
+typeof foo === "symbol"
+typeof bar === "symbol"
+
+let obj = {}
+obj[foo] = "foo"
+obj[bar] = "bar"
+
+JSON.stringify(obj) // {}
+Object.keys(obj) // []
+Object.getOwnPropertyNames(obj) // []
+Object.getOwnPropertySymbols(obj) // [ foo, bar ]
+
+```
+---
+ #Links
+
+ - [Can I Use](http://caniuse.com/)
+ - [Babel playground](https://babeljs.io/repl/)
+ - [ES6 Features](http://es6-features.org/)
+ - [2ality](http://www.2ality.com/)
+ - [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+
+
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
